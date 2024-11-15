@@ -1,0 +1,6 @@
+@T1NumberToWords_HostAddress = http://localhost:5187
+
+GET {{T1NumberToWords_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
