@@ -4,7 +4,7 @@ using T1NumberToWords.Interfaces;
 namespace T1NumberToWords.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AppController : ControllerBase
 {   
     private readonly IInterpreterService _interpreterService;
