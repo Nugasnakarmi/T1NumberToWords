@@ -11,7 +11,6 @@ public class AppController : ControllerBase
     //By injecting dependency through constructor, we are inverting the control (IoC) to the AppController to choose the instance of IInterpreterService interface.
     public AppController( IInterpreterService interpreterService)  {
      _interpreterService = interpreterService;
-
     }
 
     [HttpGet("interpret")]
@@ -20,10 +19,10 @@ public class AppController : ControllerBase
         try
         {
             string result = _interpreterService.InterpretNumberToWords(inputNumber);
-            return Ok(result);
+            return Ok( new { interpretedString = result });
         }
         catch (Exception ex) { 
-            return BadRequest(ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
  
     }

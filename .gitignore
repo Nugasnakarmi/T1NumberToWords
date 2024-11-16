@@ -5,3 +5,7 @@
 /.vs
 /obj
 /bin/Debug/net8.0
+/T1NumberToWordsTest/.vs/T1NumberToWordsTest
+/T1NumberToWordsTest/obj
+/T1NumberToWords.Tests/obj
+/T1NumberToWordsTest/bin/Debug/net8.0
