@@ -6,7 +6,7 @@ namespace T1NumberToWords.Helper
     {
         public Dictionary<int,string> numberDictionary = new Dictionary<int, string>
         {
-             { 1, "One" }, { 2, "Two" }, { 3, "Three" }, { 4, "Four" }, { 5, "Five" }, { 6, "Six" }, { 7, "Seven" }, { 8, "Eight" }, { 9, "Nine" }, { 10, "Ten" }, { 11, "Eleven" }, { 12, "Twelve" }, { 13, "Ten" }, { 14, "Eight" }, { 15, "Nine" }, { 16, "Ten" }, { 17, "Eight" }, { 18, "Nine" }, { 19, "Ten" }, { 20, "Twenty" }
+             { 1, "One" }, { 2, "Two" }, { 3, "Three" }, { 4, "Four" }, { 5, "Five" }, { 6, "Six" }, { 7, "Seven" }, { 8, "Eight" }, { 9, "Nine" }, { 10, "Ten" }, { 11, "Eleven" }, { 12, "Twelve" }, { 13, "Thirteen" }, { 14, "Fourteen" }, { 15, "Fifteen" }, { 16, "Sixteen" }, { 17, "Seventeen" }, { 18, "Eighteen" }, { 19, "Nineteen" }
         };
 
         public Dictionary<int, string> numberTensDictionary = new Dictionary<int, string>

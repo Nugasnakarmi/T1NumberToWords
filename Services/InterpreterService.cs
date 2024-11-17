@@ -26,14 +26,14 @@ public class InterpreterService : IInterpreterService
         }
 
         //First get numbers to the right of the decimal point For eg: .45
-        decimal c = inputNumber % 1;
-        int withoutDecimal = (int)(inputNumber - c);
+        decimal numberAfterDecimalPoint = inputNumber % 1;
+        int withoutDecimal = (int)(inputNumber - numberAfterDecimalPoint);
 
         //Algorithm
-        int temp = withoutDecimal;
-        string stringifiedNumber = temp.ToString();
+
+        string stringifiedNumber = withoutDecimal.ToString();
         int noOfDigits = stringifiedNumber.Length;
-      
+
         //do
         //{
         //    placeValueCount++;
@@ -44,24 +44,23 @@ public class InterpreterService : IInterpreterService
         StringBuilder numberInterpretation = new StringBuilder();
         NumberHelper numberHelper = new NumberHelper();
 
-        
-        UpdateNumberInterpretation(numberInterpretation,  numberHelper,  stringifiedNumber, noOfDigits);
+        UpdateNumberInterpretation(numberInterpretation, numberHelper, stringifiedNumber, noOfDigits);
 
+        numberInterpretation.Append("dollars ");
+        string afterDecimal = ((int)(numberAfterDecimalPoint * 100)).ToString();
+        if (numberAfterDecimalPoint > 0)
+        {
+            numberInterpretation.Append("and ");
+            // Interpret after decimal point
+            UpdateNumberInterpretation(numberInterpretation, numberHelper, afterDecimal, 2);
+            numberInterpretation.Append("cents");
+        }
 
-        numberInterpretation.Append("dollars and ");
-        string afterDecimal = ((int)(c * 100)).ToString();
-        // Interpret after decimal point
-
-        UpdateNumberInterpretation(numberInterpretation, numberHelper, afterDecimal, 2);
-
-       
-        numberInterpretation.Append("cents");
         return numberInterpretation.ToString().ToUpper();
     }
 
-    public StringBuilder UpdateNumberInterpretation( StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int noOfDigits)
+    public StringBuilder UpdateNumberInterpretation(StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int noOfDigits)
     {
-      
         for (int i = 0; i < noOfDigits; i++)
         {
             //var divider = numberHelper.GetPowerValue(10, i - 1);
@@ -69,26 +68,63 @@ public class InterpreterService : IInterpreterService
             int currentNumberInPosition;
             int.TryParse(stringifiedNumber[i].ToString(), out currentNumberInPosition);
             // Don't try to use dictionary if the current number is 0
-            if(currentNumberInPosition > 0) {
+            if (currentNumberInPosition > 0)
+            {
                 int j = noOfDigits - i;
                 //Console.WriteLine($"temp: {temp} pVC: {noOfDigits} cure: {currentNumberInPosition}, place: {i}, divided by: {numberHelper.GetPowerValue(10, i - 1)}");
                 switch (j)
                 {
-
                     case 1:
                         numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
+                        numberInterpretation.Append(" ");
                         break;
+
                     case 2:
-                        numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
+                        if (currentNumberInPosition == 1)
+                        {
+                            int secondDigit;
+                            int.TryParse(stringifiedNumber[i+1].ToString(), out secondDigit);
+                            int twoDigitNumberToInterpret = currentNumberInPosition * 10 + secondDigit;
+                            numberInterpretation.Append(numberHelper.numberDictionary[twoDigitNumberToInterpret]);
+                            numberInterpretation.Append(" ");
+                            i++; //Skip next iteration
+                        }
+                        else
+                        {
+                            numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
+                            numberInterpretation.Append("-");
+                        }
+
                         break;
+
                     case 3:
                         numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append(" Hundred");
+                        numberInterpretation.Append(" Hundred ");
+                        break;
+
+                    case 4:
+                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
+                        numberInterpretation.Append(" Thousand ");
+                        break;
+
+                    case 5:
+                        numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
+                        numberInterpretation.Append("-");
+                        break;
+
+                    case 6:
+                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
+                        numberInterpretation.Append(" Hundred ");
+                        break;
+
+                    case 7:
+                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
+                        numberInterpretation.Append(" Million ");
                         break;
                 }
-                numberInterpretation.Append(" ");
+                
             }
-           
+
             //temp = temp - currentNumberInPosition * divider;
         }
 
