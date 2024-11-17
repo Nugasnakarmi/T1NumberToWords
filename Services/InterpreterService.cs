@@ -20,7 +20,7 @@ public class InterpreterService : IInterpreterService
             throw new ExceptionHelper("Cannot interpret negative values.");
         }
 
-        if (inputNumber > 9999999)
+        if (inputNumber > 9999999.99M)
         {
             throw new ExceptionHelper("Number is too large, please choose a smaller number");
         }
@@ -32,19 +32,11 @@ public class InterpreterService : IInterpreterService
         //Algorithm
 
         string stringifiedNumber = withoutDecimal.ToString();
-        int noOfDigits = stringifiedNumber.Length;
-
-        //do
-        //{
-        //    placeValueCount++;
-        //    temp /= 10;
-        //}
-        //while (temp > 0);
 
         StringBuilder numberInterpretation = new StringBuilder();
         NumberHelper numberHelper = new NumberHelper();
 
-        UpdateNumberInterpretation(numberInterpretation, numberHelper, stringifiedNumber, noOfDigits);
+        UpdateNumberInterpretation(numberInterpretation, numberHelper, stringifiedNumber, stringifiedNumber.Length);
 
         numberInterpretation.Append("dollars ");
         string afterDecimal = ((int)(numberAfterDecimalPoint * 100)).ToString();
@@ -52,26 +44,23 @@ public class InterpreterService : IInterpreterService
         {
             numberInterpretation.Append("and ");
             // Interpret after decimal point
-            UpdateNumberInterpretation(numberInterpretation, numberHelper, afterDecimal, 2);
+            UpdateNumberInterpretation(numberInterpretation, numberHelper, afterDecimal, afterDecimal.Length);
             numberInterpretation.Append("cents");
         }
 
         return numberInterpretation.ToString().ToUpper();
     }
 
-    public StringBuilder UpdateNumberInterpretation(StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int noOfDigits)
+    private void UpdateNumberInterpretation(StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int noOfDigits)
     {
         for (int i = 0; i < noOfDigits; i++)
         {
-            //var divider = numberHelper.GetPowerValue(10, i - 1);
-            //int currentNumberInPosition = temp / divider;
             int currentNumberInPosition;
             int.TryParse(stringifiedNumber[i].ToString(), out currentNumberInPosition);
             // Don't try to use dictionary if the current number is 0
             if (currentNumberInPosition > 0)
             {
                 int j = noOfDigits - i;
-                //Console.WriteLine($"temp: {temp} pVC: {noOfDigits} cure: {currentNumberInPosition}, place: {i}, divided by: {numberHelper.GetPowerValue(10, i - 1)}");
                 switch (j)
                 {
                     case 1:
@@ -82,24 +71,44 @@ public class InterpreterService : IInterpreterService
                     case 2:
                         if (currentNumberInPosition == 1)
                         {
-                            int secondDigit;
-                            int.TryParse(stringifiedNumber[i+1].ToString(), out secondDigit);
-                            int twoDigitNumberToInterpret = currentNumberInPosition * 10 + secondDigit;
-                            numberInterpretation.Append(numberHelper.numberDictionary[twoDigitNumberToInterpret]);
+                            NumberInterpretationTwoDigits(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i);
                             numberInterpretation.Append(" ");
                             i++; //Skip next iteration
                         }
                         else
                         {
                             numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
-                            numberInterpretation.Append("-");
+                            if (stringifiedNumber[i + 1] != '0')
+                                numberInterpretation.Append("-");
+                            else
+                                numberInterpretation.Append(" ");
                         }
 
                         break;
 
-                    case 3:
+                    case 3 or 6:
                         numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
                         numberInterpretation.Append(" Hundred ");
+                        break;
+
+                    case 5:
+                        if (currentNumberInPosition == 1)
+                        {
+                            NumberInterpretationTwoDigits(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i);
+                            numberInterpretation.Append(" Thousand ");
+                            numberInterpretation.Append(" ");
+                            i++; //Skip next iteration
+                        }
+                        else
+                        {
+                            numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
+                            if (stringifiedNumber[i + 1] != '0')
+                                numberInterpretation.Append("-");
+                        
+                            else
+                                numberInterpretation.Append(" Thousand ");
+                        }
+
                         break;
 
                     case 4:
@@ -107,27 +116,20 @@ public class InterpreterService : IInterpreterService
                         numberInterpretation.Append(" Thousand ");
                         break;
 
-                    case 5:
-                        numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append("-");
-                        break;
-
-                    case 6:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append(" Hundred ");
-                        break;
-
                     case 7:
                         numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
                         numberInterpretation.Append(" Million ");
                         break;
                 }
-                
             }
-
-            //temp = temp - currentNumberInPosition * divider;
         }
+    }
 
-        return numberInterpretation;
+    private void NumberInterpretationTwoDigits(int currentNumberInPosition, StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int index)
+    {
+        int secondDigit;
+        int.TryParse(stringifiedNumber[index + 1].ToString(), out secondDigit);
+        int twoDigitNumberToInterpret = currentNumberInPosition * 10 + secondDigit;
+        numberInterpretation.Append(numberHelper.numberDictionary[twoDigitNumberToInterpret]);
     }
 }
