@@ -13,26 +13,6 @@ namespace T1NumberToWords.Helper
         {
              { 1, "Ten" }, { 2, "Twenty" }, { 3, "Thirty" }, { 4, "Forty" }, { 5, "Fifty" }, { 6, "Sixty" }, { 7, "Seventy" }, { 8, "Eighty" }, { 9, "Ninety" }
         };
-        public NumberHelper() {
-           
-        }
-
-        public int GetPowerValue ( int number, int power)
-        {
-            var temp = number;
-            if (power < 1)
-                return 1;
-
-            if (power == 1)
-                return temp;
-            var storeTemp = temp;
-            for(int i = 1; i<= power-1 ; i++)
-            {
-                temp *= storeTemp; 
-            }
-            return temp;
-            
-        }
-
+        public NumberHelper() {}
     }
 }

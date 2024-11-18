@@ -9,3 +9,5 @@
 /T1NumberToWordsTest/obj
 /T1NumberToWords.Tests/obj
 /T1NumberToWordsTest/bin/Debug/net8.0
+/T1NumberToWords.Tests/bin/Debug/net8.0
+/.editorconfig

@@ -9,5 +9,14 @@ public enum PlaceValue
     Thousands,
     TenThousands,
     HundredThousands,
-    Millions   
+    Millions,
+    TenMillions,
+    HundredMillions,
+    Billions,
+    TenBillions,
+    HundredBillions,
+    Trillions,
+    TenTrillions,
+    HundredTrillions,
+    Quadrillions
 }

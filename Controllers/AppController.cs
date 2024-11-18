@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using T1NumberToWords.Interfaces;
+using T1NumberToWords.Models;
 
 namespace T1NumberToWords.Controllers;
 
@@ -14,12 +15,12 @@ public class AppController : ControllerBase
     }
 
     [HttpGet("interpret")]
-    public IActionResult Interpret(decimal inputNumber)
+    public IActionResult Interpret(decimal inputNumber, int mode)
     {
         try
         {
-            string result = _interpreterService.InterpretNumberToWords(inputNumber);
-            return Ok( new { interpretedString = result });
+            string result = _interpreterService.InterpretNumberToWords(inputNumber, mode);
+            return Ok( new Result{ interpretedString = result });
         }
         catch (Exception ex) { 
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
