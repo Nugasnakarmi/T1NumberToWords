@@ -41,31 +41,29 @@ public class InterpreterService : IInterpreterService
         if (withoutDecimal == 0 && numberAfterDecimalPoint == 0)
             return NumberDescription.ZERO.ToUpper();
 
-        UpdateNumberInterpretation(numberInterpretation, numberHelper, stringifiedNumber, stringifiedNumber.Length);
+        UpdateNumberInterpretation(numberInterpretation, numberHelper, stringifiedNumber, stringifiedNumber.Length, mode);
 
         if (withoutDecimal > 0 && mode == (int)ConversionMode.CURRENCY)
             numberInterpretation.Append(" dollars");
 
         string afterDecimal = ((int)(numberAfterDecimalPoint * 100)).ToString();
+
         if (numberAfterDecimalPoint > 0)
         {
             if (withoutDecimal > 0)
                 numberInterpretation.Append(" and ");
             // Interpret after decimal point
-            UpdateNumberInterpretation(numberInterpretation, numberHelper, afterDecimal, afterDecimal.Length);
+            UpdateNumberInterpretation(numberInterpretation, numberHelper, afterDecimal, afterDecimal.Length, mode);
             if (mode == (int)ConversionMode.CURRENCY)
                 numberInterpretation.Append(" cents");
-            else if (afterDecimal.Length == 1)
-
-                numberInterpretation.Append(" tenths");
-            else if (afterDecimal.Length == 2)
+            else if (mode == (int)ConversionMode.WORDS)
                 numberInterpretation.Append(" hundredths");
+
         }
-        numberInterpretation.ToString().ToUpper();
-        return Regex.Replace(numberInterpretation.ToString().ToUpper(), @"\s+", " ");
+        return Regex.Replace(numberInterpretation.ToString().ToUpper().TrimEnd(), @"\s+", " ");
     }
 
-    private void UpdateNumberInterpretation(StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int noOfDigits)
+    private void UpdateNumberInterpretation(StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int noOfDigits, int mode)
     {
         for (int i = 0; i < noOfDigits; i++)
         {
@@ -86,17 +84,15 @@ public class InterpreterService : IInterpreterService
                         break;
 
                     case (int)PlaceValue.Hundreds:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append($" {NumberDescription.HUNDRED} ");
+                        UpdateNumberForOnes(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, NumberDescription.HUNDRED);
                         break;
 
                     case (int)PlaceValue.Thousands:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append($" {NumberDescription.THOUSAND} ");
+                        UpdateNumberForOnes(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, NumberDescription.THOUSAND);
                         break;
 
                     case (int)PlaceValue.TenThousands:
-                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i, NumberDescription.THOUSAND);
+                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i,  NumberDescription.THOUSAND);
                         break;
 
                     case (int)PlaceValue.HundredThousands:
@@ -104,12 +100,11 @@ public class InterpreterService : IInterpreterService
                         break;
 
                     case (int)PlaceValue.Millions:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append($" {NumberDescription.MILLION} ");
+                        UpdateNumberForOnes(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, NumberDescription.MILLION);
                         break;
 
                     case (int)PlaceValue.TenMillions:
-                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i, NumberDescription.MILLION);
+                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i,  NumberDescription.MILLION);
                         break;
 
                     case (int)PlaceValue.HundredMillions:
@@ -117,12 +112,11 @@ public class InterpreterService : IInterpreterService
                         break;
 
                     case (int)PlaceValue.Billions:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append($" {NumberDescription.BILLION} ");
+                        UpdateNumberForOnes(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, NumberDescription.BILLION);
                         break;
 
                     case (int)PlaceValue.TenBillions:
-                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i, NumberDescription.BILLION);
+                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i,  NumberDescription.BILLION );
 
                         break;
 
@@ -131,12 +125,11 @@ public class InterpreterService : IInterpreterService
                         break;
 
                     case (int)PlaceValue.Trillions:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append($" {NumberDescription.TRILLION} ");
+                        UpdateNumberForOnes(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, NumberDescription.TRILLION);
                         break;
 
                     case (int)PlaceValue.TenTrillions:
-                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i, NumberDescription.TRILLION);
+                        i = UpdateNumberForTens(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, i,  NumberDescription.TRILLION );
 
                         break;
 
@@ -145,14 +138,18 @@ public class InterpreterService : IInterpreterService
                         break;
 
                     case (int)PlaceValue.Quadrillions:
-                        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
-                        numberInterpretation.Append($" {NumberDescription.QUADRILLION} ");
+                        UpdateNumberForOnes(currentNumberInPosition, numberInterpretation, numberHelper, stringifiedNumber, NumberDescription.QUADRILLION);
                         break;
                 }
             }
         }
     }
 
+    private void UpdateNumberForOnes(int currentNumberInPosition, StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, string numberDescription)
+    {
+        numberInterpretation.Append(numberHelper.numberDictionary[currentNumberInPosition]);
+        numberInterpretation.Append($" {numberDescription} ");
+    }
     private void UpdateNumberInterpretationTwoDigits(int currentNumberInPosition, StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int index)
     {
         int secondDigit;
@@ -161,9 +158,9 @@ public class InterpreterService : IInterpreterService
         numberInterpretation.Append(numberHelper.numberDictionary[twoDigitNumberToInterpret]);
     }
 
-    private int UpdateNumberForTens(int currentNumberInPosition, StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int index, string numberDescription = "")
+    private int UpdateNumberForTens(int currentNumberInPosition, StringBuilder numberInterpretation, NumberHelper numberHelper, string stringifiedNumber, int index,  string numberDescription = "")
     {
-        string description = (numberDescription == "") ? " " : $" {numberDescription} ";
+        string description = (numberDescription == "") ? "" : $" {numberDescription} ";
 
         if (currentNumberInPosition == 1)
         {
@@ -172,12 +169,12 @@ public class InterpreterService : IInterpreterService
             index++; //Skip next iteration
         }
         else
-        {
-            numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
-            if (stringifiedNumber[index + 1] != '0')
-                numberInterpretation.Append("-");
-            else
-                numberInterpretation.Append(description);
+        {            
+                numberInterpretation.Append(numberHelper.numberTensDictionary[currentNumberInPosition]);
+                if (stringifiedNumber[index + 1] != '0')
+                    numberInterpretation.Append("-");
+                else
+                    numberInterpretation.Append(description);
         }
         return index;
     }
