@@ -7,7 +7,7 @@ The easiest approach would have been to use ASP.NET MVC such that the UI views c
 
 My approach for this challenge was to develop the UI in a separate frontend project using the Angular framework, and the core logic in the backend WebAPI project in .NET 8. The reason for going this route is because I prefer a clear separation of concern between the UI and the server-side work. I know it's much simpler and takes less time through the MVC approach but I find it easier to separate tasks of the UI or cosmetic nature to the frontend project and the tasks of the data processing or domain/business logic etc to the API project.
 
-A Web API is also reusable by mobile apps and IoT devices, and the API endoints can even be tested independently using Swagger's UI or through third-party tools like Postman.
+A Web API is also reusable by mobile apps and IoT devices, and the API endoints can even be tested independently using Swagger's UI or through third-party tools like Postman. The REST endpoints can be further documented using OpenAPI.
 
 Hence, my preference to this approach, although I know this is a limited project and it would be easier with MVC.
 

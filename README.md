@@ -9,6 +9,9 @@ You will need .NET 8.0 SDK for running the API. Please install .NET 8 SDK from h
 ----
 In visual studio, open the T1NumberToWords.soln file, and select IISExpress to run the solution.
 You may need to select the T1NumberToWords solution by clicking the cog button in the toolbar to choose between the test solution and the API.
+A swagger tab should open up in a browser in localhost https://localhost:44333/swagger/index.html. 
+This page can be interacted to test the GET endpoint independently.
+To do so, click on "Try it Out" button and enter an inputNumber eg: 12.34 and mode = 0 for currency and 1 for words.
 
 # Interacting with the solution
 ----
