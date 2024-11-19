@@ -7,11 +7,13 @@ namespace T1NumberToWords.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class AppController : ControllerBase
-{   
+{
     private readonly IInterpreterService _interpreterService;
+
     //By injecting dependency through constructor, we are inverting the control (IoC) to the AppController to choose the instance of IInterpreterService interface.
-    public AppController( IInterpreterService interpreterService)  {
-     _interpreterService = interpreterService;
+    public AppController(IInterpreterService interpreterService)
+    {
+        _interpreterService = interpreterService;
     }
 
     [HttpGet("interpret")]
@@ -20,13 +22,11 @@ public class AppController : ControllerBase
         try
         {
             string result = _interpreterService.InterpretNumberToWords(inputNumber, mode);
-            return Ok( new Result{ interpretedString = result });
+            return Ok(new Result { interpretedString = result });
         }
-        catch (Exception ex) { 
+        catch (Exception ex)
+        {
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
- 
     }
-    
-  
 }
