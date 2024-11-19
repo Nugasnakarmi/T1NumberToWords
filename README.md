@@ -4,6 +4,7 @@ Web API that converts numerical input into words or currency.
 # Build Instructions
 ----
 You will need .NET 8.0 SDK for running the API. Please install .NET 8 SDK from https://dotnet.microsoft.com/en-us/download/dotnet/8.0 if not already installed.
+If by any chance there's any error building the solution please clean solution and rebuild. This will clear and recompile the debug files in bin and obj folders.
 
 # Running the solution
 ----
